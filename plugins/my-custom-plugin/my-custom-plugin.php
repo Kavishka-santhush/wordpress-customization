@@ -44,3 +44,16 @@ function my_register_portfolio_cpt() {
     register_post_type( 'portfolio', $args );
 }
 add_action( 'init', 'my_register_portfolio_cpt' );
+
+
+
+// --- Custom Filter Hook උදාහරණයක් ---
+function my_custom_content_footer( $content ) {
+    // Single page වල හෝ main post loop එක ඇතුළේ පමණක් ක්‍රියාත්මක වීමට
+    if ( is_single() || is_singular( 'portfolio' ) ) {
+        $custom_note = '<p style="color: #e74c3c; font-style: italic; margin-top: 20px;">--- Thank you for reading this article! Built with Custom WordPress Plugin. ---</p>';
+        $content .= $custom_note;
+    }
+    return $content;
+}
+add_filter( 'the_content', 'my_custom_content_footer' );
