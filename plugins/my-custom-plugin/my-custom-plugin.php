@@ -57,3 +57,18 @@ function my_custom_content_footer( $content ) {
     return $content;
 }
 add_filter( 'the_content', 'my_custom_content_footer' );
+
+
+// --- Shortcode එකක් සෑදීම ---
+// --- Shortcode එකක් සෑදීම ---
+function my_welcome_shortcode( $atts ) {
+    // Attributes ලබාගැනීම (උදා: [my_welcome_msg name="Santhush"])
+    $atts = shortcode_atts( array(
+        'name' => 'Developer',
+    ), $atts, 'my_welcome_msg' );
+
+    return '<div style="background: #e8f8f5; border-left: 4px solid #1abc9c; padding: 10px 15px; margin: 15px 0;">' .
+           '<strong>Hello, ' . esc_html( $atts['name'] ) . '!</strong> Welcome to my custom WordPress development journey.' .
+           '</div>';
+}
+add_shortcode( 'my_welcome_msg', 'my_welcome_shortcode' );
