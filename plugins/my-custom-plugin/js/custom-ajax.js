@@ -26,7 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 url: my_ajax_obj.ajax_url,
                 type: 'POST',
                 data: {
-                    action: 'load_more_portfolios'
+                    action: 'load_more_portfolios',
+                    security: my_ajax_obj.nonce
                 },
                 success: function(response) {
                     loadBtn.innerText = 'Load Portfolios via AJAX';
@@ -52,3 +53,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+
+
