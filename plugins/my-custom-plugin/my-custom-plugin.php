@@ -72,3 +72,46 @@ function my_welcome_shortcode( $atts ) {
            '</div>';
 }
 add_shortcode( 'my_welcome_msg', 'my_welcome_shortcode' );
+
+
+
+// --- AJAX Integration සඳහා Script එක load කිරීම ---
+function my_custom_ajax_scripts() {
+    // Frontend එකට script එකක් ඇතුළත් කිරීම
+    wp_enqueue_script( 'my-ajax-script', plugins_url( 'js/custom-ajax.js', __FILE__ ), array('jquery'), '1.0', true );
+
+    // JavaScript එකට WordPress Admin AJAX URL එක pass කිරීම (Security සහ routing සඳහා)
+    wp_localize_script( 'my-ajax-script', 'my_ajax_obj', array(
+        'ajax_url' => admin_url( 'admin-ajax.php' )
+    ) );
+}
+add_action( 'wp_enqueue_scripts', 'my_custom_ajax_scripts' );
+
+// --- AJAX Request එක Handle කිරීම (Logged-in සහ Guest දෙපිරිසටම) ---
+function my_handle_ajax_portfolio_request() {
+    // ඩේටා ක්වෙරි කිරීම
+    $args = array(
+        'post_type'      => 'portfolio',
+        'posts_per_page' => 3,
+    );
+    $query = new WP_Query( $args );
+    $portfolios = array();
+
+    if ( $query->have_posts() ) {
+        while ( $query->have_posts() ) {
+            $query->the_post();
+            $portfolios[] = array(
+                'title'   => get_the_title(),
+                'link'    => get_permalink(),
+                'excerpt' => get_the_excerpt(),
+            );
+        }
+        wp_reset_postdata();
+    }
+
+    // JSON response එකක් යැවීම (MERN වල res.json() වගේ)
+    wp_send_json_success( $portfolios );
+}
+// Action hooks දෙක (WordPress වල logged-in සහ non-logged-in යූසර්ලාට ajax වැඩ කරන්න මේ දෙකම ඕනේ)
+add_action( 'wp_ajax_load_more_portfolios', 'my_handle_ajax_portfolio_request' );
+add_action( 'wp_ajax_nopriv_load_more_portfolios', 'my_handle_ajax_portfolio_request' );
