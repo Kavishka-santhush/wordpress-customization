@@ -90,9 +90,6 @@ add_action( 'wp_enqueue_scripts', 'my_custom_ajax_scripts' );
 // --- AJAX Request එක Handle කිරීම (Logged-in සහ Guest දෙපිරිසටම) ---
 function my_handle_ajax_portfolio_request() {
 
-    if ( ! isset( $_POST['security'] ) || ! wp_verify_nonce( $_POST['security'], 'my_ajax_secure_nonce' ) ) {
-        wp_send_json_error( array( 'message' => 'Security check failed!' ), 403 );
-    }
     // ඩේටා ක්වෙරි කිරීම
     $args = array(
         'post_type'      => 'portfolio',
@@ -119,15 +116,3 @@ function my_handle_ajax_portfolio_request() {
 // Action hooks දෙක (WordPress වල logged-in සහ non-logged-in යූසර්ලාට ajax වැඩ කරන්න මේ දෙකම ඕනේ)
 add_action( 'wp_ajax_load_more_portfolios', 'my_handle_ajax_portfolio_request' );
 add_action( 'wp_ajax_nopriv_load_more_portfolios', 'my_handle_ajax_portfolio_request' );
-
-
-function my_custom_ajax_scripts() {
-    wp_enqueue_script( 'my-ajax-script', plugins_url( 'js/custom-ajax.js', __FILE__ ), array('jquery'), '1.0', true );
-
-    // AJAX URL එක සමඟම Security Nonce එකක් ජෙනරේට් කර යැවීම
-    wp_localize_script( 'my-ajax-script', 'my_ajax_obj', array(
-        'ajax_url' => admin_url( 'admin-ajax.php' ),
-        'nonce'    => wp_create_nonce( 'my_ajax_secure_nonce' ) // CSRF ආරක්ෂාව සඳහා
-    ) );
-}
-add_action( 'wp_enqueue_scripts', 'my_custom_ajax_scripts' );
